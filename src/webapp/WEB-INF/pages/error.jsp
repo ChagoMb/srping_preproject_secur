@@ -11,7 +11,7 @@
     <title>No user</title>
 </head>
 <body>
-&nbsp;Sorry, User is no auth!
+<div>Sorry, User is no auth!</div>
 <br>
     <br>
     <form action="/login">

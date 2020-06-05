@@ -9,6 +9,7 @@ public interface UserDao {
     User findUserByAuth(String email, String password);
     void addUser(User user);
     void removeUser(long id);
-    void updateUser(long id, String firstName, String lastName, String password, String email, long bankAcc, String role);
+    void updateUser(long id, User user);
     User findUserById(long id);
+    User findUserByUsername(String email);
 }

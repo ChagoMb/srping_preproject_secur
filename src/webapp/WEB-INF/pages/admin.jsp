@@ -33,7 +33,7 @@
         <th>Password</th>
         <th>Bank Acc</th>
         <th>E-mail</th>
-        <th>Role</th>
+        <th>Roles</th>
         <th>Edit</th>
         <th>Delete</th>
     </tr>
@@ -45,7 +45,7 @@
             <td>${user.getPassword()}</td>
             <td>${user.getBankAcc()}</td>
             <td>${user.getEmail()}</td>
-            <td>${user.getRole()}</td>
+            <td>${user.getRoles()}</td>
             <td>
                 <form action="/admin/update" method="get">
                     <input type="hidden" name="id" value="${user.getId()}">

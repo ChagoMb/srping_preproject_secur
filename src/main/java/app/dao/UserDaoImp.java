@@ -4,12 +4,9 @@ import app.model.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.NoResultException;
 import java.util.List;
-import java.util.Objects;
 
 @Repository
 public class UserDaoImp implements UserDao {
@@ -51,20 +48,10 @@ public class UserDaoImp implements UserDao {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public void updateUser(long id, String firstName, String lastName, String password, String email, long bankAcc, String role) {
-        String hql = "UPDATE User SET firstName = :user_firstName, lastName = :user_lastName," +
-                " password = :user_password, email = :user_email, bankAcc = :user_acc," +
-                " role = :user_role WHERE id = :user_id";
-        Query<User> q = sessionFactory.getCurrentSession().createQuery(hql);
-        q.setParameter("user_id", id);
-        q.setParameter("user_firstName", firstName);
-        q.setParameter("user_lastName", lastName);
-        q.setParameter("user_password", password);
-        q.setParameter("user_email", email);
-        q.setParameter("user_acc", bankAcc);
-        q.setParameter("user_role", role);
-        q.executeUpdate();
+    public void updateUser(long id, User user) {
+        User u = new User(id, user.getFirstName(), user.getLastName(), user.getPassword(),
+                user.getBankAcc(), user.getEmail(), user.getRoles());
+        sessionFactory.getCurrentSession().update(u);
     }
 
     @Override
@@ -73,6 +60,15 @@ public class UserDaoImp implements UserDao {
         String hql = "FROM User WHERE id = :user_id";
         Query<User> q = sessionFactory.getCurrentSession().createQuery(hql);
         q.setParameter("user_id", id);
+        return q.getSingleResult();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public User findUserByUsername(String email) {
+        String hql = "FROM User WHERE email = :user_email";
+        Query<User> q = sessionFactory.getCurrentSession().createQuery(hql);
+        q.setParameter("user_email", email);
         return q.getSingleResult();
     }
 }

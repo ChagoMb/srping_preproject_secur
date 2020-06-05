@@ -1,14 +1,19 @@
 package app.model;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
@@ -27,19 +32,39 @@ public class User {
     @Column(name = "email", unique = true)
     private String email;
 
-    @Column(name = "role")
-    private String role;
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles;
 
     public User() {
     }
 
-    public User(String firstName, String lastName, String password, long bankAcc, String email, String role) {
+    public User(String firstName, String lastName, String password, long bankAcc, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
         this.bankAcc = bankAcc;
         this.email = email;
-        this.role = role;
+    }
+
+    public User(String firstName, String lastName, String password, long bankAcc, String email, Set<Role> roles) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.bankAcc = bankAcc;
+        this.email = email;
+        this.roles = roles;
+    }
+
+    public User(long id, String firstName, String lastName, String password, long bankAcc, String email, Set<Role> roles) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.bankAcc = bankAcc;
+        this.email = email;
+        this.roles = roles;
     }
 
     public long getId() {
@@ -90,12 +115,12 @@ public class User {
         this.email = email;
     }
 
-    public String getRole() {
-        return role;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     @Override
@@ -107,7 +132,7 @@ public class User {
                 ", password='" + password + '\'' +
                 ", bankAcc=" + bankAcc +
                 ", email='" + email + '\'' +
-                ", role='" + role + '\'' +
+                ", roles=" + roles +
                 '}';
     }
 
@@ -121,12 +146,41 @@ public class User {
                 Objects.equals(firstName, user.firstName) &&
                 Objects.equals(lastName, user.lastName) &&
                 Objects.equals(password, user.password) &&
-                Objects.equals(email, user.email) &&
-                Objects.equals(role, user.role);
+                Objects.equals(email, user.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, password, bankAcc, email, role);
+        return Objects.hash(id, firstName, lastName, password, bankAcc, email);
+    }
+
+    @Override
+    public String getUsername() {
+        return getEmail();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getRoles();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

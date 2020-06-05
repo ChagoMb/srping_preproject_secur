@@ -1,6 +1,6 @@
+<%@ page import="app.model.User" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 <html>
 <head>
     <title>All users</title>
@@ -33,7 +33,7 @@
         <th>Password</th>
         <th>Bank Acc</th>
         <th>E-mail</th>
-        <th>Role</th>
+        <th>Roles</th>
     </tr>
         <tr>
             <td><c:out value = "${user.getId()}"/></td>
@@ -42,7 +42,7 @@
             <td><c:out value="${user.getPassword()}"/></td>
             <td><c:out value="${user.getBankAcc()}"/></td>
             <td><c:out value="${user.getEmail()}"/></td>
-            <td><c:out value="${user.getRole()}"/></td>
+            <td><c:out value="${user.getRoles()}"/></td>
         </tr>
 </table>
 <br>
