@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Service(value = "userService")
+@Service()
 public class UserServiceImp implements UserService {
 
     @Autowired
@@ -57,21 +57,9 @@ public class UserServiceImp implements UserService {
         return dao.findUserById(id);
     }
 
-    @Override
-    @Transactional
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        return dao.findUserByUsername(s);
-    }
-
     @Transactional
     @Override
-    public UserDetails findUserByUsername(String email) {
-        User user = dao.findUserByUsername(email);
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-
-        for(Role role : user.getRoles()) {
-            grantedAuthorities.add(new SimpleGrantedAuthority(role.getAuthority()));
-        }
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), grantedAuthorities);
+    public User findUserByUsername(String email) {
+        return dao.findUserByUsername(email);
     }
 }

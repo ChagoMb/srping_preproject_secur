@@ -9,11 +9,13 @@
             width: 1575px;
             border-collapse: collapse;
         }
+
         TD, TH {
             padding: 1px;
             border: 1px solid lightgray;
             width: 175px;
         }
+
         TH {
             background: #696969;
         }
@@ -35,15 +37,19 @@
         <th>E-mail</th>
         <th>Roles</th>
     </tr>
-        <tr>
-            <td><c:out value = "${user.getId()}"/></td>
-            <td><c:out value="${user.getFirstName()}"/></td>
-            <td><c:out value="${user.getLastName()}"/></td>
-            <td><c:out value="${user.getPassword()}"/></td>
-            <td><c:out value="${user.getBankAcc()}"/></td>
-            <td><c:out value="${user.getEmail()}"/></td>
-            <td><c:out value="${user.getRoles()}"/></td>
-        </tr>
+    <tr>
+        <td><c:out value="${user.getId()}"/></td>
+        <td><c:out value="${user.getFirstName()}"/></td>
+        <td><c:out value="${user.getLastName()}"/></td>
+        <td><c:out value="${user.getPassword()}"/></td>
+        <td><c:out value="${user.getBankAcc()}"/></td>
+        <td><c:out value="${user.getEmail()}"/></td>
+        <td>
+            <c:forEach items="${user.getRoles()}" var="role">
+                ${role.name()}
+            </c:forEach>
+        </td>
+    </tr>
 </table>
 <br>
 <form action="/login">

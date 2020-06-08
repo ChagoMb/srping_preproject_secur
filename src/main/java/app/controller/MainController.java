@@ -4,13 +4,14 @@ import app.model.Role;
 import app.model.User;
 import app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +28,7 @@ public class MainController {
     private HttpSession session;
 
     @GetMapping
-    public String greeting(ModelMap model) {
+    public String greeting() {
         return "greeting";
     }
 
@@ -46,19 +47,15 @@ public class MainController {
     }
 
     @PostMapping("/admin/add")
-    public String postAdd(@RequestParam(name = "firstName") String firstName,
-                          @RequestParam(name = "lastName") String lastName,
-                          @RequestParam(name = "lastName") String password,
-                          @RequestParam(name = "bankAcc") long bankAcc,
-                          @RequestParam(name = "email") String email,
-                          @RequestParam(name = "user_role", required = false) Role roleUser,
-                          @RequestParam(name = "admin_role", required = false) Role roleAdmin) {
-
+    public String postAdd(@RequestParam(name = "user_role", required = false) Role userRole,
+                          @RequestParam(name = "admin_role", required = false) Role adminRole,
+                          User user) {
         Set<Role> roles = new HashSet<>();
-        roles.add(roleUser);
-        roles.add(roleAdmin);
+        roles.add(userRole);
+        roles.add(adminRole);
 
-        User user = new User(firstName, lastName, password, bankAcc, email, roles);
+        user.setRoles(roles);
+
         userService.addUser(user);
         return "redirect:/admin";
     }
@@ -71,21 +68,16 @@ public class MainController {
     }
 
     @PostMapping("/admin/update")
-    public String postUpdate(@RequestParam(name = "id") long id,
-                             @RequestParam(name = "firstName") String firstName,
-                             @RequestParam(name = "lastName") String lastName,
-                             @RequestParam(name = "lastName") String password,
-                             @RequestParam(name = "bankAcc") long bankAcc,
-                             @RequestParam(name = "email") String email,
-                             @RequestParam(name = "user_role", required = false) Role roleUser,
-                             @RequestParam(name = "admin_role", required = false) Role roleAdmin) {
+    public String postUpdate(@RequestParam(name = "user_role", required = false) Role roleUser,
+                             @RequestParam(name = "admin_role", required = false) Role roleAdmin,
+                             User user) {
 
         Set<Role> roles = new HashSet<>();
         roles.add(roleUser);
         roles.add(roleAdmin);
 
-        User user = new User(firstName, lastName, password, bankAcc, email, roles);
-        userService.updateUser(id, user);
+        user.setRoles(roles);
+        userService.updateUser(user.getId(), user);
         return "redirect:/admin";
     }
 
@@ -97,7 +89,8 @@ public class MainController {
 
     @GetMapping("/user")
     public String user(ModelMap model) {
-        User user = (User) session.getAttribute("user");
+        String username = (String) session.getAttribute("username");
+        User user = userService.findUserByUsername(username);
         model.addAttribute("user", user);
         return "user";
     }

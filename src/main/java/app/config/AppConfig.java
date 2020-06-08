@@ -1,5 +1,6 @@
 package app.config;
 
+import app.model.Role;
 import app.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

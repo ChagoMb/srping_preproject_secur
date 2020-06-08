@@ -45,7 +45,11 @@
             <td>${user.getPassword()}</td>
             <td>${user.getBankAcc()}</td>
             <td>${user.getEmail()}</td>
-            <td>${user.getRoles()}</td>
+            <td>
+                <c:forEach items= "${user.getRoles()}" var="role">
+                    ${role.name()}
+                </c:forEach>
+            </td>
             <td>
                 <form action="/admin/update" method="get">
                     <input type="hidden" name="id" value="${user.getId()}">
